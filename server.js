@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 app.post('/crear-pago', async (req, res) => {
   try {
-   const { amount, description } = req.body;
+    const { amount, description } = req.body;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -18,17 +18,23 @@ app.post('/crear-pago', async (req, res) => {
         {
           price_data: {
             currency: 'thb',
-            product_data: {
-    name: description
-}
             unit_amount: Math.round(amount * 100),
+            product_data: {
+              name: description || 'Reserva Tour'
+            }
           },
-          quantity: 1,
-        },
+          quantity: 1
+        }
       ],
       mode: 'payment',
+
+      // 🔥 ESTO ES CLAVE (forzamos el texto visible)
+      metadata: {
+        descripcion: description
+      },
+
       success_url: 'https://tusitio.com/success',
-      cancel_url: 'https://tusitio.com/cancel',
+      cancel_url: 'https://tusitio.com/cancel'
     });
 
     res.json({ url: session.url });
