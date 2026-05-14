@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 app.post('/crear-pago', async (req, res) => {
   try {
-    const { amount } = req.body;
+   const { amount, description } = req.body;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -19,8 +19,8 @@ app.post('/crear-pago', async (req, res) => {
           price_data: {
             currency: 'thb',
             product_data: {
-              name: 'Reserva Tour',
-            },
+    name: description
+}
             unit_amount: Math.round(amount * 100),
           },
           quantity: 1,
