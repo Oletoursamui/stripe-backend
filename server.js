@@ -33,8 +33,8 @@ app.post('/crear-pago', async (req, res) => {
         descripcion: description
       },
 
-      success_url: 'https://tusitio.com/success',
-      cancel_url: 'https://tusitio.com/cancel'
+     success_url: 'https://www.oletoursamui.com/reserva-confirmada',
+cancel_url: 'https://www.oletoursamui.com/pago-cancelado'
     });
 
     res.json({ url: session.url });
