@@ -38,7 +38,7 @@ if (event.type === 'checkout.session.completed') {
 
   await resend.emails.send({
     from: 'onboarding@resend.dev',
-    to: ['tugmail@gmail.com', session.customer_details?.email],
+    to: ['doomcycles81@gmail.com', session.customer_details?.email],
     subject: 'Nuevo pago recibido 💰',
     html: `
         <h2>Pago confirmado</h2>
