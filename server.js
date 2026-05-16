@@ -28,13 +28,26 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
   }
 
   // ✅ PAGO CONFIRMADO REAL
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
+if (event.type === 'checkout.session.completed') {
+  const session = event.data.object;
 
-    console.log('✅ PAGO CONFIRMADO');
-    console.log('Cliente:', session.customer_details);
-    console.log('Total:', session.amount_total);
-    console.log('Descripción:', session.metadata?.descripcion);
+  console.log('✅ PAGO CONFIRMADO');
+  console.log('Cliente:', session.customer_details);
+  console.log('Total:', session.amount_total);
+  console.log('Descripción:', session.metadata?.descripcion);
+
+  await resend.emails.send({
+    from: 'onboarding@resend.dev',
+    to: ['tugmail@gmail.com', session.customer_details?.email],
+    subject: 'Nuevo pago recibido 💰',
+    html: `
+        <h2>Pago confirmado</h2>
+        <p><strong>Cliente:</strong> ${session.customer_details?.email || 'No disponible'}</p>
+        <p><strong>Total:</strong> ${session.amount_total / 100} THB</p>
+        <p><strong>Reserva:</strong> ${session.metadata?.descripcion || 'Sin descripción'}</p>
+    `
+  });
+}
   }
 
   res.status(200).send();
