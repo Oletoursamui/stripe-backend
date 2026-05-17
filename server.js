@@ -27,7 +27,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // ✅ PAGO CONFIRMADO REAL
+ // ✅ PAGO CONFIRMADO REAL
 if (event.type === 'checkout.session.completed') {
   const session = event.data.object;
 
@@ -36,10 +36,12 @@ if (event.type === 'checkout.session.completed') {
   console.log('Total:', session.amount_total);
   console.log('Descripción:', session.metadata?.descripcion);
 
+  console.log('📤 Intentando enviar email...');
+
   try {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
-      to: ['doomcycles81@gmail.com', session.customer_details?.email],
+      to: 'doomcycles81@gmail.com',
       subject: 'Nuevo pago recibido 💰',
       html: `
         <h2>Pago confirmado</h2>
