@@ -36,19 +36,25 @@ if (event.type === 'checkout.session.completed') {
   console.log('Total:', session.amount_total);
   console.log('Descripción:', session.metadata?.descripcion);
 
-  await resend.emails.send({
-    from: 'onboarding@resend.dev',
-    to: ['doomcycles81@gmail.com', session.customer_details?.email],
-    subject: 'Nuevo pago recibido 💰',
-    html: `
+  try {
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: ['doomcycles81@gmail.com', session.customer_details?.email],
+      subject: 'Nuevo pago recibido 💰',
+      html: `
         <h2>Pago confirmado</h2>
         <p><strong>Cliente:</strong> ${session.customer_details?.email || 'No disponible'}</p>
         <p><strong>Total:</strong> ${session.amount_total / 100} THB</p>
         <p><strong>Reserva:</strong> ${session.metadata?.descripcion || 'Sin descripción'}</p>
-    `
-  });
-}
+      `
+    });
+
+    console.log('📧 Email enviado');
+
+  } catch (error) {
+    console.error('❌ Error enviando email:', error);
   }
+}
 
   res.status(200).send();
 });
