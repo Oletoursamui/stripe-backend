@@ -27,38 +27,39 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
- // ✅ PAGO CONFIRMADO REAL
-if (event.type === 'checkout.session.completed') {
-  const session = event.data.object;
+  // ✅ PAGO CONFIRMADO REAL
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
 
-  console.log('✅ PAGO CONFIRMADO');
-  console.log('Cliente:', session.customer_details);
-  console.log('Total:', session.amount_total);
-  console.log('Descripción:', session.metadata?.descripcion);
+    console.log('✅ PAGO CONFIRMADO');
+    console.log('Cliente:', session.customer_details);
+    console.log('Total:', session.amount_total);
+    console.log('Descripción:', session.metadata?.descripcion);
 
-  console.log('📤 Intentando enviar email...');
+    console.log('📤 Intentando enviar email...');
 
-  try {
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'doomcycles81@gmail.com',
-      subject: 'Nuevo pago recibido 💰',
-      html: `
-        <h2>Pago confirmado</h2>
-        <p><strong>Cliente:</strong> ${session.customer_details?.email || 'No disponible'}</p>
-        <p><strong>Total:</strong> ${session.amount_total / 100} THB</p>
-        <p><strong>Reserva:</strong> ${session.metadata?.descripcion || 'Sin descripción'}</p>
-      `
-    });
+    try {
+      const response = await resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: 'doomcycles81@gmail.com',
+        subject: 'Nuevo pago recibido 💰',
+        html: `
+          <h2>Pago confirmado</h2>
+          <p><strong>Cliente:</strong> ${session.customer_details?.email || 'No disponible'}</p>
+          <p><strong>Total:</strong> ${session.amount_total / 100} THB</p>
+          <p><strong>Reserva:</strong> ${session.metadata?.descripcion || 'Sin descripción'}</p>
+        `
+      });
 
-    console.log('📧 Email enviado');
+      console.log('📧 Email enviado:', response);
 
-  } catch (error) {
-    console.error('❌ Error enviando email:', error);
+    } catch (error) {
+      console.error('❌ Error enviando email:', error);
+    }
   }
-}
 
-  res.status(200).send();
+  // 👉 RESPUESTA SIEMPRE AL FINAL
+  res.status(200).json({ received: true });
 });
 
 
@@ -66,7 +67,7 @@ if (event.type === 'checkout.session.completed') {
 app.use(express.json());
 
 
-// 👉 TU ENDPOINT ORIGINAL (NO TOCADO)
+// 👉 TU ENDPOINT ORIGINAL
 app.post('/crear-pago', async (req, res) => {
   try {
     const { amount, description } = req.body;
