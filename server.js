@@ -36,22 +36,26 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     console.log('Total:', session.amount_total);
     console.log('Descripción:', session.metadata?.descripcion);
 
-    console.log('📤 Intentando enviar email...');
+    const customerEmail = session.customer_details?.email;
+
+    console.log('📤 Intentando enviar email a:', customerEmail);
 
     try {
-      const response = await resend.emails.send({
-        from: 'onboarding@resend.dev',
-        to: 'doomcycles81@gmail.com',
-        subject: 'Nuevo pago recibido 💰',
+      await resend.emails.send({
+        from: 'Ole Tours Samui <info@oletoursamui.com>',
+        to: customerEmail || 'doomcycles81@gmail.com', // fallback por si Stripe no manda email
+        subject: '✅ Reserva confirmada',
         html: `
-          <h2>Pago confirmado</h2>
-          <p><strong>Cliente:</strong> ${session.customer_details?.email || 'No disponible'}</p>
+          <h2>Pago confirmado 🎉</h2>
+          <p><strong>Cliente:</strong> ${customerEmail || 'No disponible'}</p>
           <p><strong>Total:</strong> ${session.amount_total / 100} THB</p>
           <p><strong>Reserva:</strong> ${session.metadata?.descripcion || 'Sin descripción'}</p>
+          <br>
+          <p>Gracias por reservar con nosotros 🙏</p>
         `
       });
 
-      console.log('📧 Email enviado:', response);
+      console.log('📧 Email enviado correctamente');
 
     } catch (error) {
       console.error('❌ Error enviando email:', error);
