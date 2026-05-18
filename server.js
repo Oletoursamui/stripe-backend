@@ -30,11 +30,10 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
-    const customerEmail = session.customer_details?.email;
-
-    const descripcion = session.metadata?.descripcion || '';
+    const customerEmail = session.customer_details?.email || 'No disponible';
     const telefono = session.metadata?.telefono || 'No disponible';
 
+    const descripcion = session.metadata?.descripcion || '';
     const partes = descripcion.split(' - ');
     const nombre = partes[0] || 'Cliente';
     const fecha = partes[1] || '';
@@ -46,26 +45,26 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 
     try {
       await resend.emails.send({
-        from: 'Ole Tours Samui <info@oletoursamui.com>',
+        from: 'Olé Tours <info@oletoursamui.com>',
         to: [customerEmail, 'info@oletoursamui.com'],
-        subject: 'Confirmación de pago',
+        subject: 'Pago recibido – Olé Tours',
         html: `
         <div style="font-family: Arial, sans-serif; max-width: 520px; margin:auto; padding:15px; color:#333;">
 
-          <!-- HEADER (LOGO + TITULO INLINE) -->
+          <!-- PREHEADER (anti Gmail) -->
+          <span style="display:none!important; visibility:hidden; opacity:0; color:transparent; height:0; width:0;">
+            Pago recibido correctamente. Recibirás los detalles de tu reserva próximamente.
+          </span>
+
+          <!-- HEADER -->
           <div style="display:flex; align-items:center; margin-bottom:15px;">
             <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:60px; margin-right:10px;">
-            <h2 style="margin:0; font-size:20px;">Confirmación de pago</h2>
+            <h2 style="margin:0; font-size:20px;">Pago recibido</h2>
           </div>
-
-          <!-- TEXTO -->
-          <p style="margin:0 0 10px 0;">
-            Hemos recibido correctamente tu pago.
-          </p>
 
           <!-- DETALLES -->
           <p style="margin:0 0 5px 0;">
-            <strong>Contacto:</strong> ${customerEmail || 'No disponible'} | ${telefono}
+            <strong>Contacto:</strong> ${customerEmail} | ${telefono}
           </p>
 
           <p style="margin:0 0 5px 0;">
@@ -82,15 +81,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 
           <!-- TEXTO FINAL -->
           <p style="margin:10px 0;">
-            Tu reserva está en proceso. Recibirás un correo con los detalles y horarios de recogida.
-          </p>
-
-          <p style="margin:10px 0;">
-            Para cualquier duda, puedes contactarnos:
+            Recibirás los detalles de tu reserva próximamente.
           </p>
 
           <!-- FOOTER -->
-          <p style="font-size:13px; color:#76c5cc; margin-top:10px;">
+          <p style="font-size:13px; color:#76c5cc; margin-top:15px;">
             <a href="https://www.oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Web</a> |
             <a href="mailto:info@oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Email</a> |
             <a href="https://wa.me/660925792007" style="color:#76c5cc; text-decoration:none;">WhatsApp</a> |
