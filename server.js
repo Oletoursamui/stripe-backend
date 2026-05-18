@@ -52,13 +52,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
         html: `
         <div style="font-family: Arial, sans-serif; max-width: 520px; margin:auto; padding:15px; color:#333;">
 
-          <!-- LOGO -->
-          <div style="text-align:center; margin-bottom:15px;">
-            <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:90px;">
+          <!-- HEADER (LOGO + TITULO INLINE) -->
+          <div style="display:flex; align-items:center; margin-bottom:15px;">
+            <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:60px; margin-right:10px;">
+            <h2 style="margin:0; font-size:20px;">Confirmación de pago</h2>
           </div>
-
-          <!-- TITULO -->
-          <h2 style="margin:0 0 10px 0; font-size:20px;">Confirmación de pago</h2>
 
           <!-- TEXTO -->
           <p style="margin:0 0 10px 0;">
@@ -142,7 +140,7 @@ app.post('/crear-pago', async (req, res) => {
       metadata: {
         descripcion: description,
         telefono: telefono || ''
-      }, // 👈 coma arreglada
+      },
 
       success_url: 'https://www.oletoursamui.com/reserva-confirmada',
       cancel_url: 'https://www.oletoursamui.com/pago-cancelado'
