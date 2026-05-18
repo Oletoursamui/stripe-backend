@@ -33,6 +33,8 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     const customerEmail = session.customer_details?.email;
 
     const descripcion = session.metadata?.descripcion || '';
+    const telefono = session.metadata?.telefono || 'No disponible';
+
     const partes = descripcion.split(' - ');
     const nombre = partes[0] || 'Cliente';
     const fecha = partes[1] || '';
@@ -45,7 +47,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     try {
       await resend.emails.send({
         from: 'Ole Tours Samui <info@oletoursamui.com>',
-        to: customerEmail || 'doomcycles81@gmail.com',
+        to: [customerEmail, 'info@oletoursamui.com'],
         subject: 'Confirmación de pago',
         html: `
         <div style="font-family: Arial, sans-serif; max-width: 520px; margin:auto; padding:15px; color:#333;">
@@ -63,11 +65,22 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             Hemos recibido correctamente tu pago.
           </p>
 
-          <!-- DETALLES (SIN CAJA) -->
-          <p style="margin:0 0 5px 0;"><strong>ID de reserva:</strong> ${customerEmail || 'No disponible'}</p>
-          <p style="margin:0 0 5px 0;"><strong>ID Cliente:</strong> ${nombre}</p>
-          <p style="margin:0 0 5px 0;"><strong>Fecha:</strong> ${fecha}</p>
-          <p style="margin:0 0 10px 0;"><strong>Importe:</strong> ${session.amount_total / 100} THB</p>
+          <!-- DETALLES -->
+          <p style="margin:0 0 5px 0;">
+            <strong>Contacto:</strong> ${customerEmail || 'No disponible'} | ${telefono}
+          </p>
+
+          <p style="margin:0 0 5px 0;">
+            <strong>Cliente:</strong> ${nombre}
+          </p>
+
+          <p style="margin:0 0 5px 0;">
+            <strong>Fecha:</strong> ${fecha}
+          </p>
+
+          <p style="margin:0 0 10px 0;">
+            <strong>Importe:</strong> ${session.amount_total / 100} THB
+          </p>
 
           <!-- TEXTO FINAL -->
           <p style="margin:10px 0;">
@@ -78,7 +91,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             Para cualquier duda, puedes contactarnos:
           </p>
 
-          <!-- FOOTER INLINE (CLAVE PARA GMAIL) -->
+          <!-- FOOTER -->
           <p style="font-size:13px; color:#76c5cc; margin-top:10px;">
             <a href="https://www.oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Web</a> |
             <a href="mailto:info@oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Email</a> |
@@ -108,7 +121,7 @@ app.use(express.json());
 // 👉 CREAR PAGO
 app.post('/crear-pago', async (req, res) => {
   try {
-    const { amount, description } = req.body;
+    const { amount, description, telefono } = req.body;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -127,8 +140,9 @@ app.post('/crear-pago', async (req, res) => {
       mode: 'payment',
 
       metadata: {
-        descripcion: description
-      },
+        descripcion: description,
+        telefono: telefono || ''
+      }, // 👈 coma arreglada
 
       success_url: 'https://www.oletoursamui.com/reserva-confirmada',
       cancel_url: 'https://www.oletoursamui.com/pago-cancelado'
