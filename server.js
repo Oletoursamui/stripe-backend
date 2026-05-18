@@ -65,15 +65,15 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             <p>Detalles de la operación:</p>
 
             <!-- DETALLES -->
-            <div style="background-color: #f7f7f7; padding: 15px; border-radius: 6px;">
+            <div style="background-color: #f7f7f7; padding: 10px; border-radius: 6px;">
               <p><strong>ID de reserva:</strong> ${customerEmail || 'No disponible'}</p>
               <p><strong>ID Cliente:</strong> ${nombre}</p>
-              <p><strong>Fecha:</strong> ${fecha}</p>
+              <p><strong>Fecha de servicio:</strong> ${fecha}</p>
               <p><strong>Importe pagado:</strong> ${session.amount_total / 100} THB</p>
             </div>
 
             <p style="margin-top: 20px;">
-              Nuestro equipo está procesando tu reserva. En breve recibirás un correo adicional con la confirmación final y los detalles del servicio, incluidos los horarios de recogida.
+              Tu reserva está en proceso. Recibirás un correo con los detalles y horarios de recogida.
             </p>
 
             <p>Quedamos a tu disposición para cualquier duda.</p>
