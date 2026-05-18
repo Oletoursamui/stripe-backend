@@ -32,13 +32,17 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     const session = event.data.object;
 
     const customerEmail = session.customer_details?.email;
-    const customerName = session.customer_details?.name || 'Cliente';
+
+    // 🔥 Metadata segura
     const descripcion = session.metadata?.descripcion || '';
+    const partes = descripcion.split(' - ');
+    const nombre = partes[0] || 'Cliente';
+    const fecha = partes[1] || '';
 
     console.log('✅ PAGO CONFIRMADO');
     console.log('Email:', customerEmail);
-    console.log('Nombre:', customerName);
-    console.log('Descripción:', descripcion);
+    console.log('Nombre:', nombre);
+    console.log('Fecha:', fecha);
 
     try {
       await resend.emails.send({
@@ -58,14 +62,14 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 
             <!-- TEXTO -->
             <p>Te informamos de que hemos recibido correctamente tu pago.</p>
-
             <p>Detalles de la operación:</p>
 
             <!-- DETALLES -->
             <div style="background-color: #f7f7f7; padding: 15px; border-radius: 6px;">
               <p><strong>ID de reserva:</strong> ${customerEmail || 'No disponible'}</p>
-              <p><strong>ID Cliente:</strong> ${descripcion}</p>
-              <p><strong>Total pagado:</strong> ${session.amount_total / 100} THB</p>
+              <p><strong>ID Cliente:</strong> ${nombre}</p>
+              <p><strong>Fecha:</strong> ${fecha}</p>
+              <p><strong>Importe pagado:</strong> ${session.amount_total / 100} THB</p>
             </div>
 
             <p style="margin-top: 20px;">
@@ -78,7 +82,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
 
             <div style="font-size: 13px; text-align: center;">
-
               <p style="margin-bottom: 8px;"><strong>Olé Tours</strong></p>
 
               <p style="color:#76c5cc;">
@@ -87,7 +90,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
                 <a href="https://wa.me/660925792007" style="color:#76c5cc; text-decoration:none;">WhatsApp</a> |
                 <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc; text-decoration:none;">Instagram</a>
               </p>
-
             </div>
 
           </div>
