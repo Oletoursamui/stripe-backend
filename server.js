@@ -31,14 +31,14 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
-    console.log('✅ PAGO CONFIRMADO');
-    console.log('Cliente:', session.customer_details);
-    console.log('Total:', session.amount_total);
-    console.log('Descripción:', session.metadata?.descripcion);
-
     const customerEmail = session.customer_details?.email;
+    const customerName = session.customer_details?.name || 'Cliente';
+    const descripcion = session.metadata?.descripcion || '';
 
-    console.log('📤 Intentando enviar email a:', customerEmail);
+    console.log('✅ PAGO CONFIRMADO');
+    console.log('Email:', customerEmail);
+    console.log('Nombre:', customerName);
+    console.log('Descripción:', descripcion);
 
     try {
       await resend.emails.send({
@@ -49,8 +49,8 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; color: #333; line-height: 1.6;">
 
             <!-- LOGO -->
-            <div style="text-align: center; margin-bottom: 25px;">
-              <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" alt="Olé Tours Samui" style="max-width: 160px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" alt="Olé Tours" style="max-width: 120px;">
             </div>
 
             <!-- TÍTULO -->
@@ -59,12 +59,12 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             <!-- TEXTO -->
             <p>Te informamos de que hemos recibido correctamente tu pago.</p>
 
-            <p>Detalles de la reserva:</p>
+            <p>Detalles de la operación:</p>
 
             <!-- DETALLES -->
             <div style="background-color: #f7f7f7; padding: 15px; border-radius: 6px;">
-              <p><strong>Cliente:</strong> ${customerEmail || 'No disponible'}</p>
-              <p><strong>Reserva:</strong> ${session.metadata?.descripcion || 'Sin descripción'}</p>
+              <p><strong>ID de reserva:</strong> ${customerEmail || 'No disponible'}</p>
+              <p><strong>ID Cliente:</strong> ${customerName} - ${descripcion}</p>
               <p><strong>Total pagado:</strong> ${session.amount_total / 100} THB</p>
             </div>
 
@@ -77,32 +77,15 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             <!-- FOOTER -->
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
 
-            <div style="font-size: 13px; color: #555; text-align: center; line-height: 1.8;">
-              
-              <p><strong>Olé Tours Samui</strong></p>
+            <div style="font-size: 13px; text-align: center;">
 
-              <p>
-                <a href="https://www.oletoursamui.com" style="color:#0a7cff; text-decoration:none;">
-                  www.oletoursamui.com
-                </a>
-              </p>
+              <p style="margin-bottom: 8px;"><strong>Olé Tours</strong></p>
 
-              <p>
-                <a href="mailto:info@oletoursamui.com" style="color:#0a7cff; text-decoration:none;">
-                  info@oletoursamui.com
-                </a>
-              </p>
-
-              <p>
-                <a href="https://wa.me/660925792007" style="color:#25D366; text-decoration:none;">
-                  WhatsApp
-                </a>
-              </p>
-
-              <p>
-                <a href="https://www.instagram.com/oletours_samui/" style="color:#0a7cff; text-decoration:none;">
-                  Instagram
-                </a>
+              <p style="color:#76c5cc;">
+                <a href="https://www.oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Web</a> |
+                <a href="mailto:info@oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Email</a> |
+                <a href="https://wa.me/660925792007" style="color:#76c5cc; text-decoration:none;">WhatsApp</a> |
+                <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc; text-decoration:none;">Instagram</a>
               </p>
 
             </div>
@@ -118,16 +101,16 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     }
   }
 
-  // 👉 RESPUESTA SIEMPRE AL FINAL
+  // 👉 RESPUESTA SIEMPRE
   res.status(200).json({ received: true });
 });
 
 
-// 🔥 ESTO VA DESPUÉS DEL WEBHOOK
+// 🔥 DESPUÉS DEL WEBHOOK
 app.use(express.json());
 
 
-// 👉 TU ENDPOINT ORIGINAL
+// 👉 CREAR PAGO
 app.post('/crear-pago', async (req, res) => {
   try {
     const { amount, description } = req.body;
