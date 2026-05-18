@@ -64,7 +64,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
             <!-- DETALLES -->
             <div style="background-color: #f7f7f7; padding: 15px; border-radius: 6px;">
               <p><strong>ID de reserva:</strong> ${customerEmail || 'No disponible'}</p>
-              <p><strong>ID Cliente:</strong> ${customerName} - ${descripcion}</p>
+              <p><strong>ID Cliente:</strong> ${descripcion}</p>
               <p><strong>Total pagado:</strong> ${session.amount_total / 100} THB</p>
             </div>
 
