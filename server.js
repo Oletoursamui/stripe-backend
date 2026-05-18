@@ -49,50 +49,62 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
         to: [customerEmail, 'info@oletoursamui.com'],
         subject: 'Pago recibido – Olé Tours',
         html: `
-        <div style="font-family: Arial, sans-serif; max-width: 520px; margin:auto; padding:15px; color:#333;">
+        <body style="margin:0; background-color:#f5f7f9; padding:20px;">
 
-          <!-- PREHEADER (anti Gmail) -->
-          <span style="display:none!important; visibility:hidden; opacity:0; color:transparent; height:0; width:0;">
-            Pago recibido correctamente. Recibirás los detalles de tu reserva próximamente.
-          </span>
+          <!-- CONTENEDOR -->
+          <div style="font-family: Arial, sans-serif; max-width: 640px; margin:auto;">
 
-          <!-- HEADER -->
-          <div style="display:flex; align-items:center; margin-bottom:15px;">
-            <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:60px; margin-right:10px;">
-            <h2 style="margin:0; font-size:20px;">Pago recibido</h2>
+            <!-- PREHEADER -->
+            <span style="display:none!important; visibility:hidden; opacity:0; color:transparent; height:0; width:0;">
+              Pago recibido correctamente. Recibirás los detalles de tu reserva próximamente.
+            </span>
+
+            <!-- CARD -->
+            <div style="background:#ffffff; border-radius:10px; padding:25px; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+
+              <!-- HEADER -->
+              <div style="display:flex; align-items:center; margin-bottom:15px;">
+                <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:60px; margin-right:12px;">
+                <h2 style="margin:0; font-size:22px; font-weight:600;">Pago recibido</h2>
+              </div>
+
+              <hr style="border:none; border-top:1px solid #eee; margin:15px 0;">
+
+              <!-- DETALLES -->
+              <p style="margin:0 0 6px 0;">
+                <strong>Contacto:</strong> ${customerEmail} | ${telefono}
+              </p>
+
+              <p style="margin:0 0 6px 0;">
+                <strong>Cliente:</strong> ${nombre}
+              </p>
+
+              <p style="margin:0 0 6px 0;">
+                <strong>Fecha:</strong> ${fecha}
+              </p>
+
+              <p style="margin:0 0 12px 0;">
+                <strong>Importe:</strong> ${session.amount_total / 100} THB
+              </p>
+
+              <hr style="border:none; border-top:1px solid #eee; margin:15px 0;">
+
+              <!-- TEXTO -->
+              <p style="margin:0 0 10px 0;">
+                Recibirás los detalles de tu reserva próximamente.
+              </p>
+
+              <!-- FOOTER -->
+              <p style="font-size:13px; color:#76c5cc; margin-top:15px;">
+                <a href="https://www.oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Web</a> |
+                <a href="mailto:info@oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Email</a> |
+                <a href="https://wa.me/660925792007" style="color:#76c5cc; text-decoration:none;">WhatsApp</a> |
+                <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc; text-decoration:none;">Instagram</a>
+              </p>
+
+            </div>
           </div>
-
-          <!-- DETALLES -->
-          <p style="margin:0 0 5px 0;">
-            <strong>Contacto:</strong> ${customerEmail} | ${telefono}
-          </p>
-
-          <p style="margin:0 0 5px 0;">
-            <strong>Cliente:</strong> ${nombre}
-          </p>
-
-          <p style="margin:0 0 5px 0;">
-            <strong>Fecha:</strong> ${fecha}
-          </p>
-
-          <p style="margin:0 0 10px 0;">
-            <strong>Importe:</strong> ${session.amount_total / 100} THB
-          </p>
-
-          <!-- TEXTO FINAL -->
-          <p style="margin:10px 0;">
-            Recibirás los detalles de tu reserva próximamente.
-          </p>
-
-          <!-- FOOTER -->
-          <p style="font-size:13px; color:#76c5cc; margin-top:15px;">
-            <a href="https://www.oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Web</a> |
-            <a href="mailto:info@oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Email</a> |
-            <a href="https://wa.me/660925792007" style="color:#76c5cc; text-decoration:none;">WhatsApp</a> |
-            <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc; text-decoration:none;">Instagram</a>
-          </p>
-
-        </div>
+        </body>
         `
       });
 
