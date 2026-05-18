@@ -10,7 +10,7 @@ const { Resend } = require('resend');
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 
-// 🔥 WEBHOOK (VA ANTES DE express.json)
+// 🔥 WEBHOOK (ANTES de express.json)
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
 
@@ -27,13 +27,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // ✅ PAGO CONFIRMADO REAL
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
 
     const customerEmail = session.customer_details?.email;
 
-    // 🔥 Metadata segura
     const descripcion = session.metadata?.descripcion || '';
     const partes = descripcion.split(' - ');
     const nombre = partes[0] || 'Cliente';
@@ -50,49 +48,45 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
         to: customerEmail || 'doomcycles81@gmail.com',
         subject: 'Confirmación de pago',
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; color: #333; line-height: 1.6;">
+        <div style="font-family: Arial, sans-serif; max-width: 520px; margin:auto; padding:15px; color:#333;">
 
-            <!-- LOGO -->
-            <div style="text-align: center; margin-bottom: 20px;">
-              <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" alt="Olé Tours" style="max-width: 120px;">
-            </div>
-
-            <!-- TÍTULO -->
-            <h2 style="color: #000; font-weight: 600;">Confirmación de pago</h2>
-
-            <!-- TEXTO -->
-            <p>Te informamos de que hemos recibido correctamente tu pago.</p>
-            <p>Detalles de la operación:</p>
-
-            <!-- DETALLES -->
-            <div style="background-color: #f7f7f7; padding: 10px; border-radius: 6px;">
-              <p><strong>ID de reserva:</strong> ${customerEmail || 'No disponible'}</p>
-              <p><strong>ID Cliente:</strong> ${nombre}</p>
-              <p><strong>Fecha de servicio:</strong> ${fecha}</p>
-              <p><strong>Importe pagado:</strong> ${session.amount_total / 100} THB</p>
-            </div>
-
-            <p style="margin-top: 20px;">
-              Tu reserva está en proceso. Recibirás un correo con los detalles y horarios de recogida.
-            </p>
-
-            <p>Quedamos a tu disposición para cualquier duda.</p>
-
-            <!-- FOOTER -->
-            <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;" />
-
-            <div style="font-size: 13px; text-align: center;">
-              <p style="margin-bottom: 8px;"><strong>Olé Tours</strong></p>
-
-              <p style="color:#76c5cc;">
-                <a href="https://www.oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Web</a> |
-                <a href="mailto:info@oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Email</a> |
-                <a href="https://wa.me/660925792007" style="color:#76c5cc; text-decoration:none;">WhatsApp</a> |
-                <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc; text-decoration:none;">Instagram</a>
-              </p>
-            </div>
-
+          <!-- LOGO -->
+          <div style="text-align:center; margin-bottom:15px;">
+            <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:90px;">
           </div>
+
+          <!-- TITULO -->
+          <h2 style="margin:0 0 10px 0; font-size:20px;">Confirmación de pago</h2>
+
+          <!-- TEXTO -->
+          <p style="margin:0 0 10px 0;">
+            Hemos recibido correctamente tu pago.
+          </p>
+
+          <!-- DETALLES (SIN CAJA) -->
+          <p style="margin:0 0 5px 0;"><strong>ID de reserva:</strong> ${customerEmail || 'No disponible'}</p>
+          <p style="margin:0 0 5px 0;"><strong>ID Cliente:</strong> ${nombre}</p>
+          <p style="margin:0 0 5px 0;"><strong>Fecha:</strong> ${fecha}</p>
+          <p style="margin:0 0 10px 0;"><strong>Importe:</strong> ${session.amount_total / 100} THB</p>
+
+          <!-- TEXTO FINAL -->
+          <p style="margin:10px 0;">
+            Tu reserva está en proceso. Recibirás un correo con los detalles y horarios de recogida.
+          </p>
+
+          <p style="margin:10px 0;">
+            Para cualquier duda, puedes contactarnos:
+          </p>
+
+          <!-- FOOTER INLINE (CLAVE PARA GMAIL) -->
+          <p style="font-size:13px; color:#76c5cc; margin-top:10px;">
+            <a href="https://www.oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Web</a> |
+            <a href="mailto:info@oletoursamui.com" style="color:#76c5cc; text-decoration:none;">Email</a> |
+            <a href="https://wa.me/660925792007" style="color:#76c5cc; text-decoration:none;">WhatsApp</a> |
+            <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc; text-decoration:none;">Instagram</a>
+          </p>
+
+        </div>
         `
       });
 
@@ -103,12 +97,11 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     }
   }
 
-  // 👉 RESPUESTA SIEMPRE
   res.status(200).json({ received: true });
 });
 
 
-// 🔥 DESPUÉS DEL WEBHOOK
+// 🔥 DESPUÉS
 app.use(express.json());
 
 
