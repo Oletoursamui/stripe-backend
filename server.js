@@ -44,52 +44,37 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     console.log('Fecha:', fecha);
 
     try {
-      await resend.emails.send({
-        from: 'Olé Tours <info@oletoursamui.com>',
-        to: [customerEmail, 'info@oletoursamui.com'],
-        subject: 'Pago recibido – Olé Tours',
-        html: `
-        <body style="margin:0; background-color:#f5f7f9; padding:20px;">
+  await resend.emails.send({
+    from: 'Olé Tours <info@oletoursamui.com>',
+    to: [customerEmail, 'info@oletoursamui.com'],
+    subject: 'Pago recibido – Olé Tours',
+    html: `
+    <div style="font-family: Arial, sans-serif; font-size:14px; color:#333; max-width:520px; margin:auto;">
 
-          <!-- PREHEADER (ANTI GMAIL CORTE) -->
-          <span style="display:none!important; opacity:0; color:transparent;">
-            Pago recibido correctamente. Recibirás los detalles de tu reserva próximamente.
-          </span>
+      <!-- LOGO (compacto anti-Gmail) -->
+      <p style="margin:0 0 10px 0;">
+        <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:70px;">
+      </p>
 
-          <div style="font-family: Arial, sans-serif; max-width:640px; margin:auto; background:#ffffff; padding:25px; border-radius:10px;">
+      <p><strong>Pago recibido</strong></p>
 
-            <!-- HEADER -->
-            <div style="display:flex; align-items:center; margin-bottom:15px;">
-              <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:60px; margin-right:12px;">
-              <h2 style="margin:0; font-size:22px;">Pago recibido</h2>
-            </div>
+      <p><strong>Contacto:</strong> ${customerEmail} | ${telefono}</p>
+      <p><strong>Cliente:</strong> ${nombre}</p>
+      <p><strong>Fecha:</strong> ${fecha}</p>
+      <p><strong>Importe:</strong> ${session.amount_total / 100} THB</p>
 
-            <div style="height:1px; background:#eee; margin:10px 0;"></div>
+      <p>Recibirás los detalles de tu reserva próximamente.</p>
 
-            <!-- DETALLES -->
-            <p><strong>Contacto:</strong> ${customerEmail} | ${telefono}</p>
-            <p><strong>Cliente:</strong> ${nombre}</p>
-            <p><strong>Fecha:</strong> ${fecha}</p>
-            <p><strong>Importe:</strong> ${session.amount_total / 100} THB</p>
+      <p style="font-size:13px; color:#76c5cc;">
+        <a href="https://www.oletoursamui.com" style="color:#76c5cc;">Web</a> |
+        <a href="mailto:info@oletoursamui.com" style="color:#76c5cc;">Email</a> |
+        <a href="https://wa.me/660925792007" style="color:#76c5cc;">WhatsApp</a> |
+        <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc;">Instagram</a>
+      </p>
 
-            <div style="height:1px; background:#eee; margin:10px 0;"></div>
-
-            <!-- TEXTO -->
-            <p>Recibirás los detalles de tu reserva próximamente.</p>
-
-            <!-- FOOTER -->
-            <p style="font-size:13px; color:#76c5cc; margin-top:15px;">
-              <a href="https://www.oletoursamui.com" style="color:#76c5cc;">Web</a> |
-              <a href="mailto:info@oletoursamui.com" style="color:#76c5cc;">Email</a> |
-              <a href="https://wa.me/660925792007" style="color:#76c5cc;">WhatsApp</a> |
-              <a href="https://www.instagram.com/oletours_samui/" style="color:#76c5cc;">Instagram</a>
-            </p>
-
-          </div>
-
-        </body>
-        `
-      });
+    </div>
+    `
+  });
 
       console.log('📧 Email enviado correctamente');
 
