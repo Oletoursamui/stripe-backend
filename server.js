@@ -46,7 +46,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     try {
   await resend.emails.send({
     from: 'Olé Tours <info@oletoursamui.com>',
-    to: [customerEmail, 'info@oletoursamui.com'],
+    to: [customerEmail, 'oletours.kohsamui@gmail.com'],
     subject: `Pago recibido – Olé Tours (${Date.now()})`,
     html: `
     <div style="font-family: Arial, sans-serif; max-width:640px; margin:auto; background:#ffffff; padding:25px; border-radius:10px;">
