@@ -103,10 +103,18 @@ app.use(express.json());
 // 👉 CREAR PAGO
 app.post('/crear-pago', async (req, res) => {
   try {
-    const { amount, description, telefono } = req.body;
+    const { amount, description, telefono, language } = req.body;
+    const successUrl = language === 'en'
+  ? 'https://www.oletoursamui.com/booking-confirmed'
+  : 'https://www.oletoursamui.com/reserva-confirmada';
+
+const cancelUrl = language === 'en'
+  ? 'https://www.oletoursamui.com/payment-cancelled'
+  : 'https://www.oletoursamui.com/pago-cancelado';
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
+      locale: language === 'en' ? 'en' : 'es',
       line_items: [
         {
           price_data: {
@@ -126,8 +134,8 @@ app.post('/crear-pago', async (req, res) => {
         telefono: telefono || ''
       },
 
-      success_url: 'https://www.oletoursamui.com/reserva-confirmada',
-      cancel_url: 'https://www.oletoursamui.com/pago-cancelado'
+      success_url: successUrl,
+cancel_url: cancelUrl
     });
 
     res.json({ url: session.url });
