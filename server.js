@@ -130,9 +130,10 @@ const cancelUrl = language === 'en'
       mode: 'payment',
 
       metadata: {
-        descripcion: description,
-        telefono: telefono || ''
-      },
+  descripcion: description,
+  telefono: telefono || '',
+  language: language || 'es'
+},
 
       success_url: successUrl,
 cancel_url: cancelUrl
