@@ -32,6 +32,7 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
 
     const customerEmail = session.customer_details?.email || 'No disponible';
     const telefono = session.metadata?.telefono || 'No disponible';
+    const language = session.metadata?.language || 'es';
 
     const descripcion = session.metadata?.descripcion || '';
     const partes = descripcion.split(' - ');
@@ -44,10 +45,13 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     console.log('Fecha:', fecha);
 
     try {
+      const asunto = language === 'en'
+  ? `Payment received – Olé Tours (${Date.now()})`
+  : `Pago recibido – Olé Tours (${Date.now()})`;
   await resend.emails.send({
     from: 'Olé Tours <info@oletoursamui.com>',
     to: [customerEmail, 'oletours.kohsamui@gmail.com'],
-    subject: `Pago recibido – Olé Tours (${Date.now()})`,
+    subject: asunto,
     html: `
     <div style="font-family: Arial, sans-serif; max-width:640px; margin:auto; background:#ffffff; padding:25px; border-radius:10px;">
 
@@ -57,21 +61,21 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
       <!-- HEADER -->
       <div style="display:flex; align-items:center; margin-bottom:15px;">
         <img src="https://primary.jwwb.nl/public/q/x/b/temp-rxsbzwvfehskyqcezfxp/ol-tours-3-high.png?enable-io=true&width=140" style="width:60px; margin-right:12px;">
-        <h2 style="margin:0; font-size:22px;">Pago recibido</h2>
+        <h2 style="margin:0; font-size:22px;">${language === 'en' ? 'Payment received' : 'Pago recibido'}</h2>
       </div>
 
       <div style="height:1px; background:#eee; margin:10px 0;"></div>
 
       <!-- DETALLES -->
-      <p><strong>Contacto:</strong> ${customerEmail} | ${telefono}</p>
-      <p><strong>Cliente:</strong> ${nombre}</p>
-      <p><strong>Fecha:</strong> ${fecha}</p>
-      <p><strong>Importe:</strong> ${session.amount_total / 100} THB</p>
+      <p><strong>${language === 'en' ? 'Contact' : 'Contacto'}:</strong> ${customerEmail} | ${telefono}</p>
+      <p><strong>${language === 'en' ? 'Customer' : 'Cliente'}:</strong> ${nombre}</p>
+      <p><strong>${language === 'en' ? 'Date' : 'Fecha'}:</strong> ${fecha}</p>
+      <p><strong>${language === 'en' ? 'Amount' : 'Importe'}:</strong> ${session.amount_total / 100} THB</p>
 
       <div style="height:1px; background:#eee; margin:10px 0;"></div>
 
       <!-- TEXTO -->
-      <p>Recibirás los detalles de tu reserva próximamente.</p>
+      <p>${language === 'en' ? 'You will receive your booking details shortly.' : 'Recibirás los detalles de tu reserva próximamente.'}</p>
 
       <!-- FOOTER -->
       <p style="font-size:13px; color:#76c5cc; margin-top:15px;">
